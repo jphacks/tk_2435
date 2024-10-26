@@ -21,7 +21,12 @@ function observeMessageChanges() {
     for (let mutation of mutationsList) {
       if (mutation.type === "childList" || mutation.type === "characterData") {
         const currentText = pTag.innerText.trim();
-        console.log("Captured Message:", currentText);
+        if (currentText.length > 0) {
+          // 空メッセージを除外
+          console.log("Slack Text Logger: Mutation detected.");
+          console.log("Captured Message:", currentText);
+          displayCapturedMessage(currentText); // メッセージを表示
+        }
       }
     }
   };
@@ -42,54 +47,81 @@ function observeMessageChanges() {
   console.log("Slack Text Logger: メッセージ入力の監視を開始しました。");
 }
 
-// キャプチャしたメッセージを画面左上に表示するためのdivを作成
+function displayCapturedMessage(message) {
+  try {
+    console.log(
+      "Slack Text Logger: displayCapturedMessage 関数が呼び出されました。"
+    );
+    const displayDiv = createDisplayDiv();
+    if (!displayDiv) {
+      console.log("Slack Text Logger: displayDiv が作成されませんでした。");
+      return;
+    }
+    const contentDiv = displayDiv.querySelector("#captured-message-content");
+    if (!contentDiv) {
+      console.log("Slack Text Logger: contentDiv が見つかりませんでした。");
+      return;
+    }
+
+    // 新しいメッセージを追加
+    const messageElement = document.createElement("p");
+    messageElement.textContent = message;
+
+    // 最新のメッセージを一番上に表示
+    contentDiv.prepend(messageElement);
+    console.log(
+      "Slack Text Logger: メッセージが displayDiv に追加されました。"
+    );
+  } catch (error) {
+    console.error(
+      "Slack Text Logger: displayCapturedMessage 関数でエラーが発生しました。",
+      error
+    );
+  }
+}
+
+/**
+ * メッセージ表示用のdivを作成または取得する関数
+ * 指定されたツールバーdivの上に挿入します
+ * @returns {HTMLElement} - メッセージ表示用のdiv
+ */
 function createDisplayDiv() {
-  let displayDiv = document.getElementById('captured-message-display');
+  console.log("Slack Text Logger: createDisplayDiv 関数が呼び出されました。");
+  let displayDiv = document.getElementById("captured-message-display");
   if (!displayDiv) {
-    displayDiv = document.createElement('div');
-    displayDiv.id = 'captured-message-display';
-    // スタイルを設定
-    displayDiv.style.position = 'fixed';
-    displayDiv.style.top = '10px';
-    displayDiv.style.left = '10px';
-    displayDiv.style.width = '300px';
-    displayDiv.style.padding = '15px';
-    displayDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-    displayDiv.style.color = '#fff';
-    displayDiv.style.borderRadius = '8px';
-    displayDiv.style.zIndex = '10000';
-    displayDiv.style.fontSize = '16px';
-    displayDiv.style.fontFamily = 'Arial, sans-serif';
-    displayDiv.style.boxShadow = '0 0 15px rgba(0,0,0,0.5)';
-    displayDiv.style.maxHeight = '80vh';
-    displayDiv.style.overflowY = 'auto';
-    displayDiv.style.pointerEvents = 'none'; // ユーザーの操作を妨げない
+    console.log(
+      "Slack Text Logger: displayDiv が存在しないため、新規作成します。"
+    );
+    displayDiv = document.createElement("div");
+    displayDiv.id = "captured-message-display";
     // タイトルを追加
-    displayDiv.innerHTML = '<h2 style="margin-top: 0; font-size: 18px; border-bottom: 1px solid #555; padding-bottom: 5px;">Captured Message</h2><div id="captured-message-content"></div>';
-    document.body.appendChild(displayDiv);
+    displayDiv.innerHTML =
+      '<h2>Captured Message</h2><div id="captured-message-content"></div>';
+
+    // ツールバーdivを特定してその上に挿入
+    const toolbarDiv = document.querySelector(
+      'div[role="toolbar"][aria-label="プライマリビューのアクション"]'
+    );
+    if (toolbarDiv) {
+      toolbarDiv.parentNode.insertBefore(displayDiv, toolbarDiv);
+      console.log(
+        "Slack Text Logger: displayDiv が toolbarDiv の上に挿入されました。"
+      );
+    } else {
+      console.log(
+        "Slack Text Logger: toolbarDiv が見つかりませんでした。displayDiv を body に追加します。"
+      );
+      document.body.appendChild(displayDiv);
+    }
+  } else {
+    console.log("Slack Text Logger: displayDiv が既に存在します。");
   }
   return displayDiv;
 }
 
-// メッセージを表示する関数
-function displayCapturedMessage(message) {
-  const displayDiv = createDisplayDiv();
-  const contentDiv = displayDiv.querySelector('#captured-message-content');
-
-  // 新しいメッセージを追加
-  const messageElement = document.createElement('p');
-  messageElement.textContent = message;
-  messageElement.style.margin = '10px 0';
-  messageElement.style.padding = '10px';
-  messageElement.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-  messageElement.style.borderRadius = '4px';
-  messageElement.style.wordBreak = 'break-word'; // 長い単語でも折り返す
-
-  // 最新のメッセージを一番上に表示
-  contentDiv.prepend(messageElement);
-}
-
-// DOMが完全に読み込まれた後にセットアップを開始
+/**
+ * DOMが完全に読み込まれた後にセットアップを開始する
+ */
 window.addEventListener("load", () => {
   console.log("Slack Text Logger: ページロード完了。監視を開始します。");
   // ページ内の動的な変更に対応するため、一定間隔で監視を試みる
