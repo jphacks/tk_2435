@@ -1,11 +1,12 @@
 // content.js
 
-// Firebaseの初期化をローカルからインポート
+// Firebaseの初期化をCDNからインポート
 const script = document.createElement("script");
-script.src = "path/to/local/firebase-app.js"; // ローカルのパスに変更
+script.src = "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"; // CDNのURLに変更
 script.onload = () => {
   const scriptFirestore = document.createElement("script");
-  scriptFirestore.src = "path/to/local/firebase-firestore.js"; // ローカルのパスに変更
+  scriptFirestore.src =
+    "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"; // CDNのURLに変更
   scriptFirestore.onload = () => {
     // Firebaseを初期化
     const app = firebase.initializeApp(firebaseConfig);
