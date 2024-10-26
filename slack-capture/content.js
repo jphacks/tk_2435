@@ -2,33 +2,64 @@
 
 console.log("Slack Text Logger: content.jsが読み込まれました。");
 
-/**
- * メッセージ入力欄の変化を監視し、メッセージをキャプチャする関数
- */
-function observeMessageChanges() {
+let currentPath = window.location.pathname;
+
+// チャンネル変更を監視して、必要に応じて監視を再設定する関数
+const monitorChannelChange = () => {
+  let lastPath = currentPath;
+
+  // 定期的にURLのパス部分をチェック
+  setInterval(() => {
+    currentPath = window.location.pathname;
+    if (currentPath !== lastPath) {
+      console.log("Slack Text Logger: チャンネルが変更されました。");
+      lastPath = currentPath;
+      // 既存の監視を停止して、新しいメッセージ入力欄を監視
+      observeMessageChanges();
+    }
+  }, 1000);
+};
+
+// メッセージ入力欄の変化を監視し、メッセージをキャプチャする関数
+let messageObserver = null;
+
+const observeMessageChanges = () => {
+  // 既存のオブザーバーがある場合は切断
+  if (messageObserver) {
+    messageObserver.disconnect();
+    console.log("Slack Text Logger: 既存のMutationObserverを切断しました。");
+  }
+
   const editorDiv = document.querySelector("div.ql-editor");
   if (!editorDiv) {
-    console.log("Slack Text Logger: div.ql-editorが見つかりませんでした。");
+    console.log(
+      "Slack Text Logger: div.ql-editorが見つかりませんでした。再試行します。"
+    );
+    setTimeout(observeMessageChanges, 1000);
     return;
   }
 
   const pTag = editorDiv.querySelector("p");
   if (!pTag) {
-    console.log("Slack Text Logger: pタグが見つかりませんでした。");
+    console.log(
+      "Slack Text Logger: pタグが見つかりませんでした。再試行します。"
+    );
+    setTimeout(observeMessageChanges, 1000);
     return;
   }
 
+  // メッセージを初期化
+  const initialText = pTag.innerText.trim();
+  displayCapturedMessage(initialText);
+
   // MutationObserverのコールバック関数
-  const callback = function (mutationsList, observer) {
+  const callback = (mutationsList) => {
     for (let mutation of mutationsList) {
       if (mutation.type === "childList" || mutation.type === "characterData") {
         const currentText = pTag.innerText.trim();
-        if (currentText.length > 0) {
-          // 空メッセージを除外
-          console.log("Slack Text Logger: Mutation detected.");
-          console.log("Captured Message:", currentText);
-          displayCapturedMessage(currentText); // メッセージを表示
-        }
+        console.log("Slack Text Logger: メッセージが変更されました。");
+        console.log("Captured Message:", currentText);
+        displayCapturedMessage(currentText); // メッセージを表示
       }
     }
   };
@@ -40,21 +71,17 @@ function observeMessageChanges() {
     subtree: true,
   };
 
-  // MutationObserverのインスタンスを作成
-  const observer = new MutationObserver(callback);
+  // 新しいMutationObserverのインスタンスを作成
+  messageObserver = new MutationObserver(callback);
 
   // MutationObserverをeditorDiv全体に設定
-  observer.observe(editorDiv, config);
+  messageObserver.observe(editorDiv, config);
 
   console.log("Slack Text Logger: メッセージ入力の監視を開始しました。");
-}
+};
 
-/**
- * キャプチャしたメッセージを画面に表示する関数
- * 最新のメッセージのみを表示し、以前のメッセージを削除します
- * @param {string} message - キャプチャしたメッセージ
- */
-function displayCapturedMessage(message) {
+// キャプチャしたメッセージを画面に表示する関数
+const displayCapturedMessage = (message) => {
   try {
     console.log(
       "Slack Text Logger: displayCapturedMessage 関数が呼び出されました。"
@@ -88,14 +115,10 @@ function displayCapturedMessage(message) {
       error
     );
   }
-}
+};
 
-/**
- * メッセージ表示用のdivを作成または取得する関数
- * 指定されたツールバーdivの上に挿入します
- * @returns {HTMLElement} - メッセージ表示用のdiv
- */
-function createDisplayDiv() {
+// メッセージ表示用のdivを作成または取得する関数
+const createDisplayDiv = () => {
   console.log("Slack Text Logger: createDisplayDiv 関数が呼び出されました。");
   let displayDiv = document.getElementById("captured-message-display");
   if (!displayDiv) {
@@ -127,25 +150,17 @@ function createDisplayDiv() {
     console.log("Slack Text Logger: displayDiv が既に存在します。");
   }
   return displayDiv;
-}
+};
 
-/**
- * DOMが完全に読み込まれた後にセットアップを開始する
- */
+// 初期化関数
+const initialize = () => {
+  console.log("Slack Text Logger: 初期化を開始します。");
+  observeMessageChanges();
+  monitorChannelChange();
+};
+
+// DOMが完全に読み込まれた後にセットアップを開始
 window.addEventListener("load", () => {
-  console.log("Slack Text Logger: ページロード完了。監視を開始します。");
-  // ページ内の動的な変更に対応するため、一定間隔で監視を試みる
-  const intervalId = setInterval(() => {
-    const editorDiv = document.querySelector("div.ql-editor");
-    const pTag = editorDiv ? editorDiv.querySelector("p") : null;
-
-    if (editorDiv && pTag) {
-      observeMessageChanges();
-      clearInterval(intervalId); // 監視を開始したらインターバルをクリア
-    } else {
-      console.log(
-        "Slack Text Logger: div.ql-editorまたはpタグがまだ見つかりません。"
-      );
-    }
-  }, 1000);
+  console.log("Slack Text Logger: ページロード完了。初期化を開始します。");
+  initialize();
 });
