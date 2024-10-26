@@ -2,7 +2,9 @@
 
 console.log("Slack Text Logger: content.jsが読み込まれました。");
 
-// 監視対象のpタグの変更を検出し、テキストをコンソールにログ出力する関数
+/**
+ * メッセージ入力欄の変化を監視し、メッセージをキャプチャする関数
+ */
 function observeMessageChanges() {
   const editorDiv = document.querySelector("div.ql-editor");
   if (!editorDiv) {
@@ -41,12 +43,17 @@ function observeMessageChanges() {
   // MutationObserverのインスタンスを作成
   const observer = new MutationObserver(callback);
 
-  // MutationObserverをpタグではなくeditorDiv全体に設定
+  // MutationObserverをeditorDiv全体に設定
   observer.observe(editorDiv, config);
 
   console.log("Slack Text Logger: メッセージ入力の監視を開始しました。");
 }
 
+/**
+ * キャプチャしたメッセージを画面に表示する関数
+ * 最新のメッセージのみを表示し、以前のメッセージを削除します
+ * @param {string} message - キャプチャしたメッセージ
+ */
 function displayCapturedMessage(message) {
   try {
     console.log(
@@ -63,12 +70,15 @@ function displayCapturedMessage(message) {
       return;
     }
 
+    // 以前のメッセージをクリア
+    contentDiv.innerHTML = "";
+
     // 新しいメッセージを追加
     const messageElement = document.createElement("p");
     messageElement.textContent = message;
 
-    // 最新のメッセージを一番上に表示
-    contentDiv.prepend(messageElement);
+    // メッセージを追加
+    contentDiv.appendChild(messageElement);
     console.log(
       "Slack Text Logger: メッセージが displayDiv に追加されました。"
     );
