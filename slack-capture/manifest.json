@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Slack Message Capture",
+  "version": "1.0",
+  "description": "Slackでメッセージを送信する前にテキストを取得し、画面上に表示します。",
+  "permissions": ["activeTab", "scripting"],
+  "content_scripts": [
+    {
+      "matches": ["https://*.slack.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon.jpg",
+    "48": "icons/icon.jpg",
+    "128": "icons/icon.jpg"
+  }
+}
