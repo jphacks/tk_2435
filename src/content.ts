@@ -1,6 +1,10 @@
 import { checkWithAI } from "./apiHandler";
 import { dangerousWords as localWords } from "./dangerousWords";
 
+// SVGファイル名を取得する関数
+async function getSvgFileNames(): Promise<string[]> {return ['blue_cry.svg'];
+}
+
 // 危険ワードが含まれると赤線を引く関数
 async function checkForDangerousWords(
   textArea: HTMLTextAreaElement | HTMLInputElement
@@ -17,6 +21,30 @@ async function checkForDangerousWords(
       `<span style="color: red; text-decoration: underline;">${word}</span>`
     );
   });
+
+  // SVGを表示するための親要素を作成
+  const svgContainer = document.createElement("div");
+  console.log(textArea.getBoundingClientRect().top);
+  svgContainer.style.position = "absolute";
+  svgContainer.style.top = (textArea.getBoundingClientRect().top + window.scrollY) + "px";
+  svgContainer.style.right = "0"; // 右上に揃えるために右を0に設定
+  svgContainer.style.pointerEvents = "none"; // テキストエリアの操作を妨げない
+
+  // SVGファイル名を取得
+  const svgFileNames = await getSvgFileNames();
+
+  // SVGを追加
+  svgFileNames.forEach((fileName) => {
+    const svgImage = document.createElement("img");
+    svgImage.src = `slack-capture/image/${fileName}`; // SVGのパスを指定
+    svgImage.style.width = "50px"; // SVGの幅を指定
+    svgImage.style.height = "50px"; // SVGの高さを指定
+    svgImage.style.marginLeft = "5px"; // SVGの間隔を指定
+    svgContainer.appendChild(svgImage);
+  });
+
+  // SVGコンテナをテキストエリアの親要素に追加
+  textArea.parentNode?.insertBefore(svgContainer, textArea.nextSibling);
 
   const tempDiv = document.createElement("div");
   tempDiv.innerHTML = highlightedText;
