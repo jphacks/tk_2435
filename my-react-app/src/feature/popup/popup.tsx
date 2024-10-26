@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import axios, { AxiosResponse } from "axios"; // APIを叩くのにaxiosを使用
 import { useForm } from "react-hook-form"; // formを使うためにreact-hook-formを使用
-import chrome from "chrome";
+chrome.runtime.sendMessage({ greeting: "hello" }, function (response) {
+  console.log(response);
+});
 
 // GitHubのユーザー名を取得するための型
 // GitHubのページに居れば自動的にユーザー名を取得し
@@ -93,8 +95,16 @@ const Popup = () => {
   return (
     <>
       <h1>GitHub Language Stats Extension</h1>
-      <div dangerouslySetInnerHTML={{ __html: currentStats?.data }} />
-      <div dangerouslySetInnerHTML={{ __html: currentTopLanguage?.data }} />
+      {currentStats && currentStats.data ? (
+        <div dangerouslySetInnerHTML={{ __html: currentStats.data }} />
+      ) : (
+        <div>No stats available</div>
+      )}
+      {currentTopLanguage && currentTopLanguage.data ? (
+        <div dangerouslySetInnerHTML={{ __html: currentTopLanguage.data }} />
+      ) : (
+        <div>No top language data available</div>
+      )}
       <form onSubmit={onSubmit}>
         <label>GitHub username </label>
         <input {...register("username")} placeholder="GitHub username" />
