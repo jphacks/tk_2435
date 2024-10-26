@@ -3,9 +3,9 @@
 /* Captured Message Display Container */
 #captured-message-display {
   position: fixed;
-  top: 60px; /* toolbar divの下に配置 */
-  left: 10px;
-  width: 300px;
+  top: 75vh; /* toolbar divの下に配置 */
+  left: 35wh; /* 位置を右に移動 */
+  width: 20wh;
   padding: 15px;
   background-color: rgba(0, 0, 0, 0.8);
   color: #fff;
@@ -16,7 +16,30 @@
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   max-height: 80vh;
   overflow-y: auto;
-  pointer-events: none; /* ユーザーの操作を妨げない */
+  pointer-events: auto;
+}
+
+/* 送信ボタンのスタイル */
+#captured-message-display button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-left: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  position: relative;
+  z-index: 1;
+}
+
+/* ホバー時のスタイル */
+#captured-message-display button:hover {
+  background-color: #45a049;
 }
 
 /* Captured Message Title */
@@ -28,6 +51,12 @@
 }
 
 /* Captured Message Content */
+#captured-message-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 #captured-message-content p {
   margin: 10px 0;
   padding: 10px;
