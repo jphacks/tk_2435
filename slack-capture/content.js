@@ -183,6 +183,40 @@ const createDisplayDiv = () => {
   } else {
     console.log("Slack Text Logger: displayDiv が既に存在します。");
   }
+
+  // 送信ボタンのクリックイベント
+  const sendButton = displayDiv.querySelector("button");
+  if (sendButton) {
+    sendButton.addEventListener("click", () => {
+      const message = document
+        .querySelector("div.ql-editor p")
+        .innerText.trim();
+      if (message) {
+        console.log(
+          "Slack Text Logger: 送信ボタンがクリックされました。メッセージ:",
+          message
+        );
+
+        // 吹き出しを作成
+        const bubble = document.createElement("div");
+        bubble.className = "message-bubble"; // 吹き出しのクラスを追加
+        bubble.textContent = message; // メッセージを設定
+
+        // 吹き出しを表示する親要素に追加
+        const displayArea = document.getElementById("message-display-area"); // 吹き出しを表示するエリア
+        displayArea.appendChild(bubble);
+
+        // メッセージ入力欄をクリア
+        document.querySelector("div.ql-editor p").innerText = "";
+      }
+    });
+  }
+
+  // 吹き出しを表示するエリアを作成
+  const displayArea = document.createElement("div");
+  displayArea.id = "message-display-area"; // 吹き出し表示エリアのID
+  displayDiv.appendChild(displayArea);
+
   return displayDiv;
 };
 
@@ -198,3 +232,10 @@ window.addEventListener("load", () => {
   console.log("Slack Text Logger: ページロード完了。初期化を開始します。");
   initialize();
 });
+
+// ハラスメントをチェックする関数の定義
+function checkHarassment(message) {
+  // ここにハラスメントチェックのロジックを実装
+  const harassmentKeywords = ["不適切な言葉", "攻撃的な表現"]; // 例: 不適切なキーワードのリスト
+  return harassmentKeywords.some((keyword) => message.includes(keyword));
+}

@@ -3,9 +3,9 @@
 /* Captured Message Display Container */
 #captured-message-display {
   position: fixed;
-  top: 70vh; /* toolbar divの下に配置 */
+  top: 60vh; /* toolbar divの下に配置 */
   left: 30vw;
-  width: 30vw;
+  width: 60vw;
   padding: 15px;
   background-color: rgba(0, 0, 0, 0.8);
   color: #fff;
@@ -16,7 +16,7 @@
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   max-height: 80vh;
   overflow-y: auto;
-  pointer-events: none; /* ユーザーの操作を妨げない */
+  pointer-events: auto; /* ユーザーの操作を妨げない */
 }
 
 /* Captured Message Title */
@@ -50,6 +50,8 @@
   border-radius: 4px; /* 角を丸くする */
   cursor: pointer; /* カーソルをポインターに */
   transition: background-color 0.3s; /* ホバー時のトランジション */
+  width: 100px; /* ボタンの幅を固定 */
+  height: 40px; /* ボタンの高さを固定 */
 }
 
 /* Send Button Hover Effect */
