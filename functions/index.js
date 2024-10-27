@@ -6,6 +6,7 @@ require("dotenv").config();
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
+// 修正: functions.database.ref を admin.database().ref に変更
 exports.processMessage = functions.database
   .ref("/messages/inputMessage")
   .onWrite(async (change) => {
@@ -47,7 +48,7 @@ exports.processMessage = functions.database
       const responseText = response; // Assign to a new variable
 
       // 結果をデータベースに書き込む
-      const resultRef = admin.database().ref("messages/outputMessage");
+      const resultRef = admin.database().ref("messages/outputMessage"); // ここは正しい
       await resultRef.set({
         text: responseText,
         timestamp: Date.now(),
