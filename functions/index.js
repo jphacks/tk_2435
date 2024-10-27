@@ -1,43 +1,60 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
-const { onRequest } = require("firebase-functions/v2/https");
-const logger = require("firebase-functions/logger");
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+require("dotenv").config();
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+const {GoogleGenerativeAI} = require("@google/generative-ai");
 
-// HTTPリクエストを処理するエンドポイント
-exports.sendMessage = functions.https.onRequest(async (req, res) => {
-  if (req.method !== "POST") {
-    return res.status(405).send("Method Not Allowed");
-  }
+exports.processMessage = functions.database
+    .ref("/messages/inputMessage")
+    .onWrite(async (change, context) => {
+      const messageData = change.after.val();
 
-  const message = req.body.message; // リクエストボディからメッセージを取得
+      if (!messageData) {
+        console.log("No data found.");
+        return null;
+      }
 
-  // Firestoreにメッセージを保存する例
-  try {
-    const docRef = await admin
-      .firestore()
-      .collection("messages")
-      .add({ text: message });
-    return res.status(200).send(`Message sent with ID: ${docRef.id}`);
-  } catch (error) {
-    console.error("Error sending message:", error);
-    return res.status(500).send("Internal Server Error");
-  }
-});
+      const inputText = messageData.text;
+
+      // Gemini API の設定
+      const genAI = new GoogleGenerativeAI(functions.config().gemini.apikey);
+
+      const model = genAI.getGenerativeModel({
+        model: "gemini-1.5-flash",
+        systemInstruction:
+        "あなたは入力された内容でハラスメントになりそうな言い回しや内容を検知して、該当する入力部分とそれの修正案を返します。返すフォーマットはJSONです。",
+      });
+
+      const generationConfig = {
+        temperature: 1,
+        topP: 0.95,
+        topK: 64,
+        maxOutputTokens: 8192,
+        responseMimeType: "text/plain",
+      };
+
+      try {
+        const chatSession = model.startChat({
+          generationConfig,
+          history: [],
+        });
+
+        const result = await chatSession.sendMessage(inputText);
+
+        const responseText = await result.response.text();
+
+        // 結果をデータベースに書き込む
+        const resultRef = admin.database().ref("messages/outputMessage");
+        await resultRef.set({
+          text: responseText,
+          timestamp: Date.now(),
+        });
+
+        return null;
+      } catch (error) {
+        console.error("Error processing message:", error);
+        return null;
+      }
+    });
