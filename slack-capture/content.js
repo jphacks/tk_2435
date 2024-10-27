@@ -9,6 +9,27 @@ const badWords = {
   しろよ: "してみれば？",
   遅い: "時間がかかっているけど大丈夫？",
   まだなのか: "もう少しお待ちいただけますか？",
+  黙って: "落ち着いて",
+  つまらない: "一緒に考えてみてみる",
+  すぐに: "急ぎで対応してくれると嬉しい",
+};
+
+// Emo Iconsの定義
+const emoIcons = {
+  grey: {
+    cry: "https://i.ibb.co/BwYyyCr/cry.png",
+    happy: "https://i.ibb.co/xskMcz8/happy.png",
+    surprise: "https://i.ibb.co/sw78pms/surprise.png",
+    question: "https://i.ibb.co/rf3W5V0/question.png",
+    pain: "https://i.ibb.co/z4PKzhS/pain.png",
+  },
+  color: {
+    cry: "https://i.ibb.co/2WzNTJh/blue-cry.png",
+    happy: "https://i.ibb.co/vvM4sqJ/pink-happy.png",
+    surprise: "https://i.ibb.co/nn9S0zf/orenge-suprise.png",
+    question: "https://i.ibb.co/5GkGbrx/yellow-question.png",
+    pain: "https://i.ibb.co/ZJs0NT1/purple-pain.png",
+  },
 };
 
 // チャンネル変更を監視して、必要に応じて監視を再設定する関数
@@ -102,7 +123,7 @@ function processText(currentText) {
     const suggestions = foundBadWords.map(
       (word) => `${word} → ${badWords[word]}`
     );
-    displaySuggestions(suggestions);
+    displaySuggestions(suggestions, foundBadWords.length);
   } else {
     // サジェスチョンをクリア
     clearSuggestions();
@@ -183,7 +204,7 @@ const createDisplayDiv = () => {
     );
     displayDiv = document.createElement("div");
     displayDiv.id = "captured-message-display";
-    // タイトルを追加
+    // タイトルとコンテンツを追加
     displayDiv.innerHTML =
       '<h2>Captured Message</h2><div id="captured-message-content"></div>';
 
@@ -213,7 +234,7 @@ const createDisplayDiv = () => {
 };
 
 // サジェスチョンを表示する関数
-const displaySuggestions = (suggestions) => {
+const displaySuggestions = (suggestions, badWordCount) => {
   const suggestionsDiv = createSuggestionsDiv();
   if (!suggestionsDiv) {
     console.log("Slack Text Logger: suggestionsDiv が作成されませんでした。");
@@ -234,6 +255,9 @@ const displaySuggestions = (suggestions) => {
     suggestionElement.textContent = suggestion;
     contentDiv.appendChild(suggestionElement);
   });
+
+  // Emo Iconsの表示
+  displayEmoIcons(badWordCount);
 };
 
 // サジェスチョン表示用のdivを作成または取得する関数
@@ -242,7 +266,7 @@ const createSuggestionsDiv = () => {
   if (!suggestionsDiv) {
     suggestionsDiv = document.createElement("div");
     suggestionsDiv.id = "suggestions-display";
-    // タイトルを追加
+    // タイトル、コンテンツ、Emo Iconsコンテナを追加
     suggestionsDiv.innerHTML =
       '<h2>Suggestions</h2><div id="suggestions-content"></div>';
 
@@ -256,6 +280,13 @@ const createSuggestionsDiv = () => {
     } else {
       document.body.appendChild(suggestionsDiv);
     }
+
+    // Emo Icons コンテナを作成して追加
+    const emoIconsContainer = document.createElement("div");
+    emoIconsContainer.id = "emo-icons-container";
+    suggestionsDiv.appendChild(emoIconsContainer);
+  } else {
+    console.log("Slack Text Logger: suggestionsDiv が既に存在します。");
   }
   return suggestionsDiv;
 };
@@ -268,6 +299,59 @@ const clearSuggestions = () => {
     if (contentDiv) {
       contentDiv.innerHTML = "";
     }
+    // Emo Iconsもクリア
+    const emoIconsContainer = suggestionsDiv.querySelector(
+      "#emo-icons-container"
+    );
+    if (emoIconsContainer) {
+      emoIconsContainer.innerHTML = "";
+    }
+  }
+};
+
+// Emo Iconsを表示する関数
+const displayEmoIcons = (badWordCount) => {
+  const emoIconsContainer = document.getElementById("emo-icons-container");
+  if (!emoIconsContainer) return;
+
+  // 以前のアイコンをクリア
+  emoIconsContainer.innerHTML = "";
+
+  // Emo Iconsコンテナにクラスを追加
+  emoIconsContainer.className = "emo-icons-container";
+
+  // Grey Emo Iconsを常に表示
+  const greyIcons = Object.keys(emoIcons.grey);
+  greyIcons.forEach((emotion) => {
+    const img = document.createElement("img");
+    img.src = emoIcons.grey[emotion];
+    img.alt = emotion;
+    img.className = "emo-icon grey-emo";
+    emoIconsContainer.appendChild(img);
+  });
+
+  // Color Emo Iconを表示
+  let colorEmotion = "happy"; // デフォルト
+
+  if (badWordCount === 0) {
+    colorEmotion = "happy";
+  } else if (badWordCount === 1) {
+    colorEmotion = "question";
+  } else if (badWordCount === 2) {
+    colorEmotion = "surprise";
+  } else if (badWordCount === 3) {
+    colorEmotion = "pain";
+  } else if (badWordCount >= 4) {
+    colorEmotion = "cry";
+  }
+
+  const colorIconSrc = emoIcons.color[colorEmotion];
+  if (colorIconSrc) {
+    const img = document.createElement("img");
+    img.src = colorIconSrc;
+    img.alt = colorEmotion;
+    img.className = "emo-icon color-emo";
+    emoIconsContainer.appendChild(img);
   }
 };
 
