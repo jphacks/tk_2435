@@ -3,9 +3,9 @@
 /* Captured Message Display Container */
 #captured-message-display {
   position: fixed;
-  top: 60px; /* toolbar divの下に配置 */
-  left: 10px;
-  width: 300px;
+  top: 70vh; /* toolbar divの下に配置 */
+  left: 30vw;
+  width: 30vw;
   padding: 15px;
   background-color: rgba(0, 0, 0, 0.8);
   color: #fff;
@@ -34,4 +34,49 @@
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   word-break: break-word; /* 長い単語でも折り返す */
+}
+
+/* Send Button Style */
+#captured-message-display button {
+  background-color: #4caf50; /* 緑色の背景 */
+  color: white; /* 文字色を白に */
+  border: none; /* ボーダーをなしに */
+  padding: 10px 15px; /* パディング設定 */
+  text-align: center; /* テキストを中央揃え */
+  text-decoration: none; /* テキストの下線をなしに */
+  display: inline-block; /* インラインブロックに設定 */
+  font-size: 16px; /* フォントサイズを設定 */
+  margin-left: 10px; /* メッセージとの間にスペースを追加 */
+  border-radius: 4px; /* 角を丸くする */
+  cursor: pointer; /* カーソルをポインターに */
+  transition: background-color 0.3s; /* ホバー時のトランジション */
+}
+
+/* Send Button Hover Effect */
+#captured-message-display button:hover {
+  background-color: #45a049; /* ホバー時の背景色 */
+}
+
+/* Feedback Bubble Style */
+.feedback-bubble {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #000;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+  position: relative;
+  max-width: 280px; /* 吹き出しの最大幅 */
+  border: 1px solid #ccc; /* 吹き出しのボーダー */
+}
+
+/* 吹き出しの三角形 */
+.feedback-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: 100%; /* 吹き出しの上に配置 */
+  left: 20px; /* 吹き出しの中央に配置 */
+  margin-left: -5px; /* 中央揃え */
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent rgba(255, 255, 255, 0.9) transparent; /* 吹き出しの色に合わせる */
 }

@@ -80,6 +80,11 @@ const observeMessageChanges = () => {
   console.log("Slack Text Logger: メッセージ入力の監視を開始しました。");
 };
 
+const GEMINI_API_KEY = "AIzaSyCtw3Z-Nk-U1-ITZcaqz341NJg9aKV0XhI"; // ここにあなたのAPIキーを入力してください
+const API_ENDPOINT =
+  "https://generativelanguage.googleapis.com/v1beta2/models/chat-bison-001:generateMessage?key=" +
+  GEMINI_API_KEY; // 新しいAPIエンドポイント形式
+
 // キャプチャしたメッセージを画面に表示する関数
 const displayCapturedMessage = (message) => {
   try {
@@ -106,9 +111,38 @@ const displayCapturedMessage = (message) => {
 
     // メッセージを追加
     contentDiv.appendChild(messageElement);
+
+    // 送信ボタンが既に存在するか確認
+    let sendButton = displayDiv.querySelector("button");
+    if (!sendButton) {
+      // 送信ボタンを作成
+      sendButton = document.createElement("button");
+      sendButton.textContent = "送信";
+      sendButton.style.marginLeft = "10px"; // ボタンとメッセージの間にスペースを追加
+      sendButton.onclick = () => {
+        console.log("送信ボタンがクリックされました。メッセージ:", message);
+        // Geminiの関数を呼び出す
+        const feedback = callGeminiFunction(message); // Geminiの関数を呼び出す
+        displayFeedback(feedback); // フィードバックを表示
+      };
+
+      // フレックスボックスを設定
+      const flexContainer = document.createElement("div");
+      flexContainer.style.display = "flex";
+      flexContainer.style.alignItems = "center"; // 垂直方向の中央揃え
+      flexContainer.appendChild(contentDiv);
+      flexContainer.appendChild(sendButton);
+
+      // フレックスコンテナをdisplayDivに追加
+      displayDiv.appendChild(flexContainer);
+    }
+
     console.log(
       "Slack Text Logger: メッセージが displayDiv に追加されました。"
     );
+
+    // Gemini APIにハラスメント判定を問い合わせ
+    checkHarassment(message);
   } catch (error) {
     console.error(
       "Slack Text Logger: displayCapturedMessage 関数でエラーが発生しました。",
