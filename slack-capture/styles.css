@@ -1,3 +1,5 @@
+/* styles.css */
+
 /* Captured Message Display Container */
 #captured-message-display {
   position: absolute;
@@ -55,27 +57,19 @@
   word-break: break-word; /* 長い単語でも折り返す */
 }
 
-/* 不適切な言葉に適用するスタイル */
-.bad-word {
-  text-decoration: underline;
-  text-decoration-color: red;
-  text-decoration-style: solid;
-}
-
-
 /* Emo Icons Container */
 #emo-icons-container {
   margin-top: 10px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center; /* アイコンを中央に配置 */
 }
 
 /* Emo Iconsのスタイル */
 .emo-icon {
   width: 30px;
   height: 30px;
-  margin-left: 5px;
+  margin: 0 5px; /* 左右に余白を設定 */
 }
 
 /* Grey Emo Iconsに適用するスタイル */
@@ -86,4 +80,11 @@
 /* Color Emo Iconsに適用するスタイル */
 .color-emo {
   opacity: 1;
+}
+
+/* 不適切な言葉に適用するスタイル */
+.bad-word {
+  text-decoration: underline;
+  text-decoration-color: red;
+  text-decoration-style: solid;
 }
