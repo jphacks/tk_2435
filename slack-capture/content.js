@@ -17,11 +17,11 @@ const badWords = {
 // Emo Iconsの定義
 const emoIcons = {
   grey: {
-    cry: "https://i.ibb.co/BwYyyCr/cry.png",
     happy: "https://i.ibb.co/xskMcz8/happy.png",
-    surprise: "https://i.ibb.co/sw78pms/surprise.png",
     question: "https://i.ibb.co/rf3W5V0/question.png",
+    surprise: "https://i.ibb.co/sw78pms/surprise.png",
     pain: "https://i.ibb.co/z4PKzhS/pain.png",
+    cry: "https://i.ibb.co/BwYyyCr/cry.png",
   },
   color: {
     cry: "https://i.ibb.co/2WzNTJh/blue-cry.png",
@@ -118,14 +118,13 @@ function processText(currentText) {
   // メッセージを表示
   displayCapturedMessage(currentText, foundBadWords);
 
+  // サジェスチョンを表示
   if (foundBadWords.length > 0) {
-    // 該当する不適切な言葉と代替フレーズを表示
     const suggestions = foundBadWords.map(
       (word) => `${word} → ${badWords[word]}`
     );
     displaySuggestions(suggestions, foundBadWords.length);
   } else {
-    // サジェスチョンをクリア
     clearSuggestions();
   }
 }
@@ -179,7 +178,7 @@ const displayCapturedMessage = (message, foundBadWords) => {
 
     // 新しいメッセージを追加
     const messageElement = document.createElement("p");
-    messageElement.innerHTML = highlightedMessage; // innerText を innerHTML に変更
+    messageElement.innerHTML = highlightedMessage;
 
     // メッセージを追加
     contentDiv.appendChild(messageElement);
@@ -268,7 +267,7 @@ const createSuggestionsDiv = () => {
     suggestionsDiv.id = "suggestions-display";
     // タイトル、コンテンツ、Emo Iconsコンテナを追加
     suggestionsDiv.innerHTML =
-      '<h2>Suggestions</h2><div id="suggestions-content"></div>';
+      '<h2>Suggestions</h2><div id="suggestions-content"></div><div id="emo-icons-container"></div>';
 
     // `captured-message-display` の下に挿入
     const displayDiv = document.getElementById("captured-message-display");
@@ -280,11 +279,6 @@ const createSuggestionsDiv = () => {
     } else {
       document.body.appendChild(suggestionsDiv);
     }
-
-    // Emo Icons コンテナを作成して追加
-    const emoIconsContainer = document.createElement("div");
-    emoIconsContainer.id = "emo-icons-container";
-    suggestionsDiv.appendChild(emoIconsContainer);
   } else {
     console.log("Slack Text Logger: suggestionsDiv が既に存在します。");
   }
@@ -320,21 +314,13 @@ const displayEmoIcons = (badWordCount) => {
   // Emo Iconsコンテナにクラスを追加
   emoIconsContainer.className = "emo-icons-container";
 
-  // Grey Emo Iconsを常に表示
-  const greyIcons = Object.keys(emoIcons.grey);
-  greyIcons.forEach((emotion) => {
-    const img = document.createElement("img");
-    img.src = emoIcons.grey[emotion];
-    img.alt = emotion;
-    img.className = "emo-icon grey-emo";
-    emoIconsContainer.appendChild(img);
-  });
+  // 感情の順序を定義
+  const emotionsOrder = ["happy", "question", "surprise", "pain", "cry"];
 
-  // Color Emo Iconを表示
-  let colorEmotion = "happy"; // デフォルト
-
+  // 対応する感情を取得
+  let colorEmotion = null;
   if (badWordCount === 0) {
-    colorEmotion = "happy";
+    colorEmotion = null; // 全てgreyのまま
   } else if (badWordCount === 1) {
     colorEmotion = "question";
   } else if (badWordCount === 2) {
@@ -345,14 +331,19 @@ const displayEmoIcons = (badWordCount) => {
     colorEmotion = "cry";
   }
 
-  const colorIconSrc = emoIcons.color[colorEmotion];
-  if (colorIconSrc) {
+  // アイコンを生成
+  emotionsOrder.forEach((emotion) => {
     const img = document.createElement("img");
-    img.src = colorIconSrc;
-    img.alt = colorEmotion;
-    img.className = "emo-icon color-emo";
+    if (emotion === colorEmotion) {
+      img.src = emoIcons.color[emotion];
+      img.className = "emo-icon color-emo";
+    } else {
+      img.src = emoIcons.grey[emotion];
+      img.className = "emo-icon grey-emo";
+    }
+    img.alt = emotion;
     emoIconsContainer.appendChild(img);
-  }
+  });
 };
 
 // 初期化関数
