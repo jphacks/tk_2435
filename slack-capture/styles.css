@@ -1,34 +1,78 @@
 /* styles.css */
 
+/* 親コンテナ */
+#info-container {
+  position: absolute;
+  bottom: 50px; /* 画面下からの距離 */
+  left: 10px; /* 画面左からの距離 */
+  display: flex;
+  flex-direction: row;
+  gap: 20px; /* 子要素間のギャップ */
+  z-index: 10000;
+  pointer-events: none; /* ユーザーの操作を妨げない */
+}
+
 /* Captured Message Display Container */
 #captured-message-display {
-  position: fixed;
-  top: 60vh; /* toolbar divの下に配置 */
-  left: 30vw;
-  width: 60vw;
+
+  width: 300px;
+
   padding: 15px;
   background-color: rgba(0, 0, 0, 0.8);
   color: #fff;
   border-radius: 8px;
-  z-index: 10000;
   font-size: 16px;
   font-family: Arial, sans-serif;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   max-height: 80vh;
   overflow-y: auto;
-  pointer-events: auto; /* ユーザーの操作を妨げない */
+
+
 }
 
-/* Captured Message Title */
-#captured-message-display h2 {
+/* Suggestions Display Container */
+#suggestions-display {
+  width: 300px;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Emo Icons Container */
+#emo-icons-container {
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 共通の h2 スタイル */
+#captured-message-display h2,
+#suggestions-display h2,
+#emo-icons-container h2 {
   margin-top: 0;
   font-size: 18px;
   border-bottom: 1px solid #555;
   padding-bottom: 5px;
+  width: 100%;
+  text-align: center;
 }
 
-/* Captured Message Content */
-#captured-message-content p {
+/* Captured Message Content と Suggestions Content の p タグ */
+#captured-message-content p,
+#suggestions-content p {
   margin: 10px 0;
   padding: 10px;
   background-color: rgba(255, 255, 255, 0.1);
@@ -36,49 +80,34 @@
   word-break: break-word; /* 長い単語でも折り返す */
 }
 
-/* Send Button Style */
-#captured-message-display button {
-  background-color: #4caf50; /* 緑色の背景 */
-  color: white; /* 文字色を白に */
-  border: none; /* ボーダーをなしに */
-  padding: 10px 15px; /* パディング設定 */
-  text-align: center; /* テキストを中央揃え */
-  text-decoration: none; /* テキストの下線をなしに */
-  display: inline-block; /* インラインブロックに設定 */
-  font-size: 16px; /* フォントサイズを設定 */
-  margin-left: 10px; /* メッセージとの間にスペースを追加 */
-  border-radius: 4px; /* 角を丸くする */
-  cursor: pointer; /* カーソルをポインターに */
-  transition: background-color 0.3s; /* ホバー時のトランジション */
-  width: 100px; /* ボタンの幅を固定 */
-  height: 40px; /* ボタンの高さを固定 */
+/* Emo Icons Container 内のスタイル */
+.emo-icons-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* アイコン間のギャップ */
 }
 
-/* Send Button Hover Effect */
-#captured-message-display button:hover {
-  background-color: #45a049; /* ホバー時の背景色 */
+/* Emo Iconsのスタイル */
+.emo-icon {
+  width: 30px;
+  height: 30px;
+  /* マージンは不要、gapで調整 */
 }
 
-/* Feedback Bubble Style */
-.feedback-bubble {
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #000;
-  border-radius: 8px;
-  padding: 10px;
-  margin-top: 10px;
-  position: relative;
-  max-width: 280px; /* 吹き出しの最大幅 */
-  border: 1px solid #ccc; /* 吹き出しのボーダー */
+/* Grey Emo Iconsに適用するスタイル */
+.grey-emo {
+  opacity: 0.6;
 }
 
-/* 吹き出しの三角形 */
-.feedback-bubble::after {
-  content: "";
-  position: absolute;
-  bottom: 100%; /* 吹き出しの上に配置 */
-  left: 20px; /* 吹き出しの中央に配置 */
-  margin-left: -5px; /* 中央揃え */
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent transparent rgba(255, 255, 255, 0.9) transparent; /* 吹き出しの色に合わせる */
+/* Color Emo Iconsに適用するスタイル */
+.color-emo {
+  opacity: 1;
+}
+
+/* 不適切な言葉に適用するスタイル */
+.bad-word {
+  text-decoration: underline;
+  text-decoration-color: red;
+  text-decoration-style: solid;
+
 }
