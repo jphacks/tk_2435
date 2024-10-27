@@ -1,9 +1,7 @@
-/* styles.css */
-
 /* Captured Message Display Container */
 #captured-message-display {
-  position: fixed;
-  top: 60px; /* toolbar divの下に配置 */
+  position: absolute;
+  bottom: 50px; /* toolbar divの下に配置 */
   left: 10px;
   width: 300px;
   padding: 15px;
@@ -19,19 +17,47 @@
   pointer-events: none; /* ユーザーの操作を妨げない */
 }
 
-/* Captured Message Title */
-#captured-message-display h2 {
+/* Suggestions Display Container */
+#suggestions-display {
+  position: absolute;
+  bottom: 50px; /* captured-message-display と同じ高さ */
+  left: 330px; /* captured-message-display の右隣に配置（幅 300px + 20px の余白） */
+  width: 300px;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 8px;
+  z-index: 10000;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  max-height: 80vh;
+  overflow-y: auto;
+  pointer-events: none;
+}
+
+/* 共通の h2 スタイル */
+#captured-message-display h2,
+#suggestions-display h2 {
   margin-top: 0;
   font-size: 18px;
   border-bottom: 1px solid #555;
   padding-bottom: 5px;
 }
 
-/* Captured Message Content */
-#captured-message-content p {
+/* Captured Message Content と Suggestions Content の p タグ */
+#captured-message-content p,
+#suggestions-content p {
   margin: 10px 0;
   padding: 10px;
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   word-break: break-word; /* 長い単語でも折り返す */
+}
+
+/* 不適切な言葉に適用するスタイル */
+.bad-word {
+  text-decoration: underline;
+  text-decoration-color: red;
+  text-decoration-style: solid;
 }
