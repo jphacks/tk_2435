@@ -119,7 +119,7 @@ function processText(currentText) {
   displayCapturedMessage(currentText, foundBadWords);
 
   // サジェスチョンを表示
-  if (foundBadWords.length > 0) {
+  if (foundBadWords.length >= 0) {
     const suggestions = foundBadWords.map(
       (word) => `${word} → ${badWords[word]}`
     );
@@ -159,7 +159,7 @@ const displayCapturedMessage = (message, foundBadWords) => {
     console.log(
       "Slack Text Logger: displayCapturedMessage 関数が呼び出されました。"
     );
-    const displayDiv = createDisplayDiv();
+    const displayDiv = createInfoContainer();
     if (!displayDiv) {
       console.log("Slack Text Logger: displayDiv が作成されませんでした。");
       return;
@@ -178,7 +178,7 @@ const displayCapturedMessage = (message, foundBadWords) => {
 
     // 新しいメッセージを追加
     const messageElement = document.createElement("p");
-    messageElement.innerHTML = highlightedMessage;
+    messageElement.innerHTML = highlightedMessage; // innerText を innerHTML に変更
 
     // メッセージを追加
     contentDiv.appendChild(messageElement);
@@ -193,43 +193,53 @@ const displayCapturedMessage = (message, foundBadWords) => {
   }
 };
 
-// メッセージ表示用のdivを作成または取得する関数
-const createDisplayDiv = () => {
-  console.log("Slack Text Logger: createDisplayDiv 関数が呼び出されました。");
-  let displayDiv = document.getElementById("captured-message-display");
-  if (!displayDiv) {
+// メインのコンテナを作成または取得する関数
+const createInfoContainer = () => {
+  console.log(
+    "Slack Text Logger: createInfoContainer 関数が呼び出されました。"
+  );
+  let infoContainer = document.getElementById("info-container");
+  if (!infoContainer) {
     console.log(
-      "Slack Text Logger: displayDiv が存在しないため、新規作成します。"
+      "Slack Text Logger: info-container が存在しないため、新規作成します。"
     );
-    displayDiv = document.createElement("div");
-    displayDiv.id = "captured-message-display";
-    // タイトルとコンテンツを追加
-    displayDiv.innerHTML =
-      '<h2>Captured Message</h2><div id="captured-message-content"></div>';
+    infoContainer = document.createElement("div");
+    infoContainer.id = "info-container";
+    // タイトルと各コンテンツを追加
+    infoContainer.innerHTML = `
+      <div id="captured-message-display">
+        <h2>Captured Message</h2>
+        <div id="captured-message-content"></div>
+      </div>
+      <div id="suggestions-display">
+        <h2>Suggestions</h2>
+        <div id="suggestions-content"></div>
+      </div>
+      <div id="emo-icons-container"></div>
+    `;
 
-    // `div.ql-editor` を取得
+    // 親要素に `position: relative` を設定
     const editorDiv = document.querySelector("div.ql-editor");
     if (editorDiv && editorDiv.parentNode) {
-      // 親要素に `position: relative` を設定
       editorDiv.parentNode.style.position = "relative";
-      // 親要素の最初の子要素として挿入
+      // 親要素に info-container を挿入
       editorDiv.parentNode.insertBefore(
-        displayDiv,
+        infoContainer,
         editorDiv.parentNode.firstChild
       );
       console.log(
-        "Slack Text Logger: displayDiv が editorDiv の親要素に挿入されました。"
+        "Slack Text Logger: info-container が editorDiv の親要素に挿入されました。"
       );
     } else {
       console.log(
         "Slack Text Logger: editorDiv が見つからなかったため、body に追加します。"
       );
-      document.body.appendChild(displayDiv);
+      document.body.appendChild(infoContainer);
     }
   } else {
-    console.log("Slack Text Logger: displayDiv が既に存在します。");
+    console.log("Slack Text Logger: info-container が既に存在します。");
   }
-  return displayDiv;
+  return infoContainer;
 };
 
 // サジェスチョンを表示する関数
@@ -265,9 +275,16 @@ const createSuggestionsDiv = () => {
   if (!suggestionsDiv) {
     suggestionsDiv = document.createElement("div");
     suggestionsDiv.id = "suggestions-display";
-    // タイトル、コンテンツ、Emo Iconsコンテナを追加
-    suggestionsDiv.innerHTML =
-      '<h2>Suggestions</h2><div id="suggestions-content"></div><div id="emo-icons-container"></div>';
+    // タイトルとコンテンツを追加
+    suggestionsDiv.innerHTML = `
+      <h2>Suggestions</h2>
+      <div id="suggestions-content"></div>
+    `;
+
+    // Emo Icons コンテナを作成して追加
+    const emoIconsContainer = document.createElement("div");
+    emoIconsContainer.id = "emo-icons-container";
+    suggestionsDiv.appendChild(emoIconsContainer);
 
     // `captured-message-display` の下に挿入
     const displayDiv = document.getElementById("captured-message-display");
@@ -311,30 +328,36 @@ const displayEmoIcons = (badWordCount) => {
   // 以前のアイコンをクリア
   emoIconsContainer.innerHTML = "";
 
-  // Emo Iconsコンテナにクラスを追加
-  emoIconsContainer.className = "emo-icons-container";
-
   // 感情の順序を定義
   const emotionsOrder = ["happy", "question", "surprise", "pain", "cry"];
 
   // 対応する感情を取得
-  let colorEmotion = null;
-  if (badWordCount === 0) {
-    colorEmotion = null; // 全てgreyのまま
-  } else if (badWordCount === 1) {
-    colorEmotion = "question";
-  } else if (badWordCount === 2) {
-    colorEmotion = "surprise";
-  } else if (badWordCount === 3) {
-    colorEmotion = "pain";
-  } else if (badWordCount >= 4) {
-    colorEmotion = "cry";
+  let colorEmotions = [];
+  if (badWordCount == 0) colorEmotions.push("happy");
+  if (badWordCount >= 1) {
+    colorEmotions.pop();
+    colorEmotions.push("question");
   }
+  if (badWordCount >= 2) {
+    colorEmotions.pop();
+    colorEmotions.push("surprise");
+  }
+  if (badWordCount >= 3) {
+    colorEmotions.pop();
+    colorEmotions.push("pain");
+  }
+  if (badWordCount >= 4) {
+    colorEmotions.pop();
+    colorEmotions.push("cry");
+  }
+
+  // Emo Iconsコンテナにクラスを追加
+  emoIconsContainer.className = "emo-icons-container";
 
   // アイコンを生成
   emotionsOrder.forEach((emotion) => {
     const img = document.createElement("img");
-    if (emotion === colorEmotion) {
+    if (colorEmotions.includes(emotion)) {
       img.src = emoIcons.color[emotion];
       img.className = "emo-icon color-emo";
     } else {
@@ -349,6 +372,7 @@ const displayEmoIcons = (badWordCount) => {
 // 初期化関数
 const initialize = () => {
   console.log("Slack Text Logger: 初期化を開始します。");
+  createInfoContainer(); // 親コンテナを作成
   observeMessageChanges();
   monitorChannelChange();
 };
