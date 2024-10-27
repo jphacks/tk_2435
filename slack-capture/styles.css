@@ -1,37 +1,108 @@
 /* styles.css */
 
+/* 親コンテナ */
+#info-container {
+  position: absolute;
+  bottom: 50px; /* 画面下からの距離 */
+  left: 10px; /* 画面左からの距離 */
+  display: flex;
+  flex-direction: row;
+  gap: 20px; /* 子要素間のギャップ */
+  z-index: 10000;
+  pointer-events: none; /* ユーザーの操作を妨げない */
+}
+
 /* Captured Message Display Container */
 #captured-message-display {
-  position: fixed;
-  top: 60px; /* toolbar divの下に配置 */
-  left: 10px;
   width: 300px;
   padding: 15px;
   background-color: rgba(0, 0, 0, 0.8);
   color: #fff;
   border-radius: 8px;
-  z-index: 10000;
   font-size: 16px;
   font-family: Arial, sans-serif;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   max-height: 80vh;
   overflow-y: auto;
-  pointer-events: none; /* ユーザーの操作を妨げない */
 }
 
-/* Captured Message Title */
-#captured-message-display h2 {
+/* Suggestions Display Container */
+#suggestions-display {
+  width: 300px;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Emo Icons Container */
+#emo-icons-container {
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 共通の h2 スタイル */
+#captured-message-display h2,
+#suggestions-display h2,
+#emo-icons-container h2 {
   margin-top: 0;
   font-size: 18px;
   border-bottom: 1px solid #555;
   padding-bottom: 5px;
+  width: 100%;
+  text-align: center;
 }
 
-/* Captured Message Content */
-#captured-message-content p {
+/* Captured Message Content と Suggestions Content の p タグ */
+#captured-message-content p,
+#suggestions-content p {
   margin: 10px 0;
   padding: 10px;
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   word-break: break-word; /* 長い単語でも折り返す */
+}
+
+/* Emo Icons Container 内のスタイル */
+.emo-icons-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* アイコン間のギャップ */
+}
+
+/* Emo Iconsのスタイル */
+.emo-icon {
+  width: 30px;
+  height: 30px;
+  /* マージンは不要、gapで調整 */
+}
+
+/* Grey Emo Iconsに適用するスタイル */
+.grey-emo {
+  opacity: 0.6;
+}
+
+/* Color Emo Iconsに適用するスタイル */
+.color-emo {
+  opacity: 1;
+}
+
+/* 不適切な言葉に適用するスタイル */
+.bad-word {
+  text-decoration: underline;
+  text-decoration-color: red;
+  text-decoration-style: solid;
 }
