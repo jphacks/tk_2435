@@ -162,11 +162,11 @@ let emoIcons = {
     "pain": "https://i.ibb.co/z4PKzhS/pain.png",
   },
   color: {
-    "cry": "https://i.ibb.co/BwYyyCr/cry.png",
-    "happy": "https://i.ibb.co/xskMcz8/happy.png",
-    "surprise": "https://i.ibb.co/sw78pms/surprise.png",
-    "question": "https://i.ibb.co/rf3W5V0/question.png",
-    "pain": "https://i.ibb.co/z4PKzhS/pain.png",
+    "cry": "https://i.ibb.co/2WzNTJh/blue-cry.png",
+    "happy": "https://i.ibb.co/vvM4sqJ/pink-happy.png",
+    "surprise": "https://i.ibb.co/nn9S0zf/orenge-suprise.png",
+    "question": "https://i.ibb.co/5GkGbrx/yellow-question.png",
+    "pain": "https://i.ibb.co/ZJs0NT1/purple-pain.png",
   }
 };
 
