@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "indivisu-caba0",
+    "st": "slack-text-tuning"
+  },
+  "targets": {},
+  "etags": {}
+}

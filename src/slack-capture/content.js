@@ -60,6 +60,7 @@ const observeMessageChanges = () => {
         console.log("Slack Text Logger: メッセージが変更されました。");
         console.log("Captured Message:", currentText);
         displayCapturedMessage(currentText); // メッセージを表示
+        sendMessageToFirestore(currentText); // Firestoreにメッセージを送信
       }
     }
   };
@@ -99,6 +100,25 @@ const displayCapturedMessage = (message) => {
 
     // 以前のメッセージをクリア
     contentDiv.innerHTML = "";
+
+    // 送信ボタンを作成
+    const sendButton = document.createElement("button");
+    sendButton.textContent = "送信";
+    sendButton.style.marginLeft = "10px"; // ボタンとメッセージの間にスペースを追加
+    sendButton.onclick = async () => {
+      // 非同期関数に変更
+      console.log(
+        "送信ボタンがクリックされました。メッセージを送信します:",
+        message
+      );
+      try {
+        // Firestoreにドキュメントを追加
+        await addDoc(collection(db, "messages"), { text: message });
+        console.log("メッセージがFirestoreに送信されました。");
+      } catch (error) {
+        console.error("Firestoreへの送信中にエラーが発生しました:", error);
+      }
+    };
 
     // 新しいメッセージを追加
     const messageElement = document.createElement("p");
@@ -164,3 +184,25 @@ window.addEventListener("load", () => {
   console.log("Slack Text Logger: ページロード完了。初期化を開始します。");
   initialize();
 });
+
+// Firestoreにメッセージを送信する関数
+const sendMessageToFirestore = async (message) => {
+  try {
+    const response = await fetch("https://<YOUR_FIREBASE_FUNCTION_URL>", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text: message }),
+    });
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    console.log("Slack Text Logger: メッセージがFirestoreに送信されました。");
+  } catch (error) {
+    console.error(
+      "Slack Text Logger: Firestoreへの送信中にエラーが発生しました。",
+      error
+    );
+  }
+};
