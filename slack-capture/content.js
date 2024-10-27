@@ -152,11 +152,95 @@ const createDisplayDiv = () => {
   return displayDiv;
 };
 
+
+let emoIcons = {
+  grey: {
+    "cry": "https://i.ibb.co/BwYyyCr/cry.png",
+    "happy": "https://i.ibb.co/xskMcz8/happy.png",
+    "surprise": "https://i.ibb.co/sw78pms/surprise.png",
+    "question": "https://i.ibb.co/rf3W5V0/question.png",
+    "pain": "https://i.ibb.co/z4PKzhS/pain.png",
+  },
+  color: {
+    "cry": "https://i.ibb.co/BwYyyCr/cry.png",
+    "happy": "https://i.ibb.co/xskMcz8/happy.png",
+    "surprise": "https://i.ibb.co/sw78pms/surprise.png",
+    "question": "https://i.ibb.co/rf3W5V0/question.png",
+    "pain": "https://i.ibb.co/z4PKzhS/pain.png",
+  }
+};
+
+const insertEmoIcons = () =>{
+
+  const targetElement = document.querySelector("div.p-composer__body");
+
+  if (targetElement) {
+      // Create a container to hold the images
+      const container = document.createElement("div");
+      container.style.display = "flex";
+      container.style.gap = "10px"; 
+
+    // const dicLength = Object.keys(emoIcons["grey"]).length;
+    // Loop through the image URLs and add each as an <img> element
+    for (let key in emoIcons.grey) {
+        const img = document.createElement("img");
+        img.src = `${emoIcons.grey[key]}`;
+        img.style.width = "30px";
+        img.style.height = "auto";
+        img.id = `grey-${key}`
+        container.appendChild(img);
+    }
+    
+    targetElement.appendChild(container);
+    } else {
+        console.error("Target element not found.");
+    }
+};
+
+
+const switchEmotions = (emotions) => {
+  if (emotions["cry"]){
+    const img = document.getElementById("grey-cry");
+    img.src = `${emoIcons.color["cry"]}`;
+    console.log(img.src)
+  }else{
+    console.log("hoge")
+
+  }
+}
+
+let jsonSample
+
+const emoIconChangeButton = () => {
+  const targetElement = document.querySelector("div.p-composer__body");
+
+  jsonSample = '{ "content": { "該当する入力部分": "すぐに", "その修正案": "なるべく早く" }, ' +
+  '"emotions": { "cry": true, "happy": false, "surprise": false, "question": false, "pain": true } }';
+
+  let jsonObj = JSON.parse(jsonSample);
+  let emotions = jsonObj.emotions;
+
+  if (targetElement) {
+    const button = document.createElement("button");
+    button.textContent = "Change Emoji"; // Add text to the button
+    targetElement.appendChild(button);
+    button.addEventListener('click', function() {
+      switchEmotions(emotions);
+    }, false);
+  } else {
+    console.error("Target element not found.");
+  }
+};
+
+
+
 // 初期化関数
 const initialize = () => {
   console.log("Slack Text Logger: 初期化を開始します。");
   observeMessageChanges();
   monitorChannelChange();
+  insertEmoIcons();
+  emoIconChangeButton();
 };
 
 // DOMが完全に読み込まれた後にセットアップを開始
@@ -164,3 +248,6 @@ window.addEventListener("load", () => {
   console.log("Slack Text Logger: ページロード完了。初期化を開始します。");
   initialize();
 });
+
+
+
