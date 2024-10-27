@@ -1,4 +1,4 @@
-const {getDataConnect, validateArgs} = require("firebase/data-connect");
+// const {getDataConnect, validateArgs} = require("firebase/data-connect");
 
 const connectorConfig = {
   connector: "default",
@@ -6,4 +6,3 @@ const connectorConfig = {
   location: "us-central1",
 };
 exports.connectorConfig = connectorConfig;
-

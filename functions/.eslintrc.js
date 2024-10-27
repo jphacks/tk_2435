@@ -1,26 +1,18 @@
 module.exports = {
   env: {
-    es6: true,
+    browser: true,
+    es2021: true,
     node: true,
   },
+  extends: ["eslint:recommended"],
   parserOptions: {
-    ecmaVersion: 2018,
+    ecmaVersion: 12,
     sourceType: "module",
   },
-  extends: ["eslint:recommended", "google"],
   rules: {
-    "no-restricted-globals": ["error", "name", "length"],
-    "prefer-arrow-callback": "error",
-    quotes: ["error", "double", { allowTemplateLiterals: true }],
+    "no-unused-vars": "warn", // 未使用の変数を警告に変更
+    "max-len": ["error", { code: 80 }], // 最大行長を80に設定
+    quotes: ["error", "double"],
+    // 他のルールを追加
   },
-  overrides: [
-    {
-      files: ["**/*.spec.*"],
-      env: {
-        mocha: true,
-      },
-      rules: {},
-    },
-  ],
-  globals: {},
 };
