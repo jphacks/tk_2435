@@ -14,7 +14,9 @@
 
 /* Captured Message Display Container */
 #captured-message-display {
+
   width: 300px;
+
   padding: 15px;
   background-color: rgba(0, 0, 0, 0.8);
   color: #fff;
@@ -24,6 +26,8 @@
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   max-height: 80vh;
   overflow-y: auto;
+
+
 }
 
 /* Suggestions Display Container */
@@ -105,4 +109,5 @@
   text-decoration: underline;
   text-decoration-color: red;
   text-decoration-style: solid;
+
 }

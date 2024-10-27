@@ -109,6 +109,7 @@ const observeMessageChanges = () => {
   console.log("Slack Text Logger: メッセージ入力の監視を開始しました。");
 };
 
+
 function processText(currentText) {
   // 不適切な言葉が含まれているかチェック
   const foundBadWords = Object.keys(badWords).filter((word) =>
@@ -153,6 +154,7 @@ function highlightBadWords(message, foundBadWords) {
   return highlightedMessage;
 }
 
+
 // キャプチャしたメッセージを画面に表示する関数
 const displayCapturedMessage = (message, foundBadWords) => {
   try {
@@ -182,9 +184,38 @@ const displayCapturedMessage = (message, foundBadWords) => {
 
     // メッセージを追加
     contentDiv.appendChild(messageElement);
+
+    // 送信ボタンが既に存在するか確認
+    let sendButton = displayDiv.querySelector("button");
+    if (!sendButton) {
+      // 送信ボタンを作成
+      sendButton = document.createElement("button");
+      sendButton.textContent = "送信";
+      sendButton.style.marginLeft = "10px"; // ボタンとメッセージの間にスペースを追加
+      sendButton.onclick = () => {
+        console.log("送信ボタンがクリックされました。メッセージ:", message);
+        // Geminiの関数を呼び出す
+        const feedback = callGeminiFunction(message); // Geminiの関数を呼び出す
+        displayFeedback(feedback); // フィードバックを表示
+      };
+
+      // フレックスボックスを設定
+      const flexContainer = document.createElement("div");
+      flexContainer.style.display = "flex";
+      flexContainer.style.alignItems = "center"; // 垂直方向の中央揃え
+      flexContainer.appendChild(contentDiv);
+      flexContainer.appendChild(sendButton);
+
+      // フレックスコンテナをdisplayDivに追加
+      displayDiv.appendChild(flexContainer);
+    }
+
     console.log(
       "Slack Text Logger: メッセージが displayDiv に追加されました。"
     );
+
+    // Gemini APIにハラスメント判定を問い合わせ
+    checkHarassment(message);
   } catch (error) {
     console.error(
       "Slack Text Logger: displayCapturedMessage 関数でエラーが発生しました。",
@@ -239,6 +270,7 @@ const createInfoContainer = () => {
   } else {
     console.log("Slack Text Logger: info-container が既に存在します。");
   }
+
   return infoContainer;
 };
 
@@ -367,6 +399,7 @@ const displayEmoIcons = (badWordCount) => {
     img.alt = emotion;
     emoIconsContainer.appendChild(img);
   });
+
 };
 
 // 初期化関数
@@ -382,3 +415,10 @@ window.addEventListener("load", () => {
   console.log("Slack Text Logger: ページロード完了。初期化を開始します。");
   initialize();
 });
+
+// ハラスメントをチェックする関数の定義
+function checkHarassment(message) {
+  // ここにハラスメントチェックのロジックを実装
+  const harassmentKeywords = ["不適切な言葉", "攻撃的な表現"]; // 例: 不適切なキーワードのリスト
+  return harassmentKeywords.some((keyword) => message.includes(keyword));
+}
