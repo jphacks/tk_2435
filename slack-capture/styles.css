@@ -61,3 +61,29 @@
   text-decoration-color: red;
   text-decoration-style: solid;
 }
+
+
+/* Emo Icons Container */
+#emo-icons-container {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Emo Iconsのスタイル */
+.emo-icon {
+  width: 30px;
+  height: 30px;
+  margin-left: 5px;
+}
+
+/* Grey Emo Iconsに適用するスタイル */
+.grey-emo {
+  opacity: 0.6;
+}
+
+/* Color Emo Iconsに適用するスタイル */
+.color-emo {
+  opacity: 1;
+}
