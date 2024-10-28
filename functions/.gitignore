@@ -1,4 +1,5 @@
 node_modules/
+<<<<<<< HEAD
 *.local
 functions/.cert/gemini-firebase-chrome-firebase-adminsdk-z9eb7-57efa56c24.json
 functions/.env.gemini-firebase-chrome
