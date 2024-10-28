@@ -105,6 +105,29 @@ const observeMessageChanges = () => {
     }
   };
 
+
+
+
+  fetch("https://your-api-endpoint.amazonaws.com/prod/sendToGemini", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ yourData: "dataToSend" })
+  })
+    .then(response => response.json())
+    .then(data => console.log("Response from Gemini API:", data))
+    .catch(error => console.error("Error:", error));
+  
+
+
+
+
+
+
+
+
+
+
+
   // オブザーバーのオプション設定
   const config = {
     characterData: true,
