@@ -1,4 +1,4 @@
-# サンプル（プロダクト名）
+# サンプル（Text-tuning）
 
 ![IMAGE ALT TEXT HERE](./images/表紙.jpg)
 
@@ -103,3 +103,8 @@
 
 * 独自で開発したものの内容をこちらに記載してください
 * 特に力を入れた部分をファイルリンク、またはcommit_idを記載してください。
+
+### 使い方
+
+- [AI Studio](https://aistudio.google.com/)にてAPI keyを取得後、それを`GEMINI_API_KEY`に入力
+- [拡張機能](chrome://extensions/)にて、パッケージ化されていない拡張機能を読み込むで、このディレクトリを選択
