@@ -50,6 +50,8 @@ const monitorChannelChange = () => {
 
 // メッセージ入力欄の変化を監視し、メッセージをキャプチャする関数
 let messageObserver = null;
+let lastText = "";
+let geminiTimeout;
 
 const observeMessageChanges = () => {
   // 既存のオブザーバーがある場合は切断
@@ -89,6 +91,16 @@ const observeMessageChanges = () => {
         console.log("Captured Message:", currentText);
 
         processText(currentText);
+        // 前のタイマーがあればクリア
+        clearTimeout(geminiTimeout);
+
+        // currentTextが変更された場合に新しいタイマーをセット
+        if (currentText !== lastText) {
+          lastText = currentText;
+          geminiTimeout = setTimeout(() => {
+            translateTextWithGemini(currentText);
+          }, 2000); // 2秒間変化がなければ翻訳を実行
+        }
       }
     }
   };
@@ -368,6 +380,37 @@ const displayEmoIcons = (badWordCount) => {
     emoIconsContainer.appendChild(img);
   });
 };
+
+const translateTextWithGemini = async (currentText) => {
+  console.log("translateに入りました", currentText)
+  const GEMINI_API_KEY = "YOUR_API_KEY";
+  const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
+
+  const prompt = `以下の言葉を翻訳して\n: ${currentText}`;
+
+  try {
+    const response = await fetch(GEMINI_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [{ text: prompt }],
+          },
+        ],
+      }),
+    });
+
+    const result = await response.json();
+    const translatedText =
+      result["candidates"][0]["content"]["parts"][0]["text"];
+    console.log("Gemini Translation:", translatedText);
+  } catch (error) {
+    console.error("Error with Gemini API:", error);
+  }
+}
 
 // 初期化関数
 const initialize = () => {
